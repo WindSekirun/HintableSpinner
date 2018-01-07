@@ -1,4 +1,4 @@
-## HintableSpinner [![](https://jitpack.io/v/WindSekirun/PredicateLayout.svg)](https://jitpack.io/#WindSekirun/PredicateLayout)
+## HintableSpinner [![](https://jitpack.io/v/WindSekirun/HintableSpinner.svg)](https://jitpack.io/#WindSekirun/HintableSpinner)
 
 [![Kotlin](https://img.shields.io/badge/kotlin-1.2.0-blue.svg)](http://kotlinlang.org)	[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
@@ -20,7 +20,7 @@ allprojects {
 *app/build.gradle*
 ```
 dependencies {
-     implementation 'com.github.WindSekirun:HintableSpinner:1.0.0'
+     implementation 'com.github.WindSekirun:HintableSpinner:0.5.0'
 }
 ```
 
