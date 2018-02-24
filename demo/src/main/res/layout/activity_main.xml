@@ -3,23 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp"
     tools:context="pyxis.uzuki.live.hintablespinnerdemo.MainActivity">
 
     <Button
+        android:id="@+id/btnClear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnClear"
         android:text="Clear state of Spinner"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btnRandomSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select random item"
+        android:textAllCaps="false" />
 
     <pyxis.uzuki.live.hintablespinner.HintableSpinner
+        android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:hintable_hintText="Select Item"
-        android:id="@+id/spinner"
         android:layout_marginTop="16dp"
-        app:hintable_hintTextColor="@color/default_color"/>
+        app:hintable_hintText="Select Item"
+        app:hintable_hintTextColor="@color/default_color" />
 </LinearLayout>

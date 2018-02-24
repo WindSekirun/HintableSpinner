@@ -1,13 +1,13 @@
 package pyxis.uzuki.live.hintablespinnerdemo;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Random;
 
 import pyxis.uzuki.live.hintablespinner.HintableSpinner;
 
@@ -21,13 +21,11 @@ public class MainActivity extends AppCompatActivity {
         final HintableSpinner spinner = findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(new HintableSpinner.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(@NotNull View view, int position, @NotNull String item) {
+            public void onItemSelected(boolean isNothingSelected, @org.jetbrains.annotations.Nullable View view,
+                                       int position, @org.jetbrains.annotations.Nullable String item) {
+                if (isNothingSelected) return;
+
                 Toast.makeText(MainActivity.this, String.format("selected %s -> %s", position, item), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected() {
-
             }
         });
         spinner.addDropdownList("A", "B", "C", "D", "E");
@@ -37,6 +35,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 spinner.clear();
+            }
+        });
+
+        Button btnRandomSelect = findViewById(R.id.btnRandomSelect);
+        btnRandomSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Random random = new Random();
+                int index = random.nextInt(spinner.getDropdownList().size());
+                spinner.setItemSelected(index);
             }
         });
     }

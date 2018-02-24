@@ -18,6 +18,7 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
     private var mHintTextColor = R.color.default_color
     private var listener: OnItemSelectedListener? = null
     private var mDropdownResources = android.R.layout.simple_spinner_dropdown_item
+    private lateinit var mAdapter: ListAdapter
 
     init {
         init(attrs)
@@ -28,23 +29,26 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
      *
      * @return selected item, can be null
      */
-    val itemSelected: String?
-        get() {
-            val position = selectedItemPosition
-            if (position == mDropdownList.size) {
-                return null
-            }
-
-            val dest = mDropdownList[position]
-
-            return if (dest == mHintText) {
-                null
-            } else dest
-
+    fun getItemSelected(): String {
+        val position = selectedItemPosition
+        if (position == mDropdownList.size) {
+            return ""
         }
 
+        val dest = mDropdownList[position]
+
+        return if (dest == mHintText) {
+            ""
+        } else dest
+    }
+
     /**
-     * set callback of item seleected
+     * get present state of mDropdownList
+     */
+    fun getDropdownList() = mDropdownList
+
+    /**
+     * set callback of item selected
      *
      * @param listener [OnItemSelectedListener]
      */
@@ -81,10 +85,28 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
     }
 
     /**
+     * set item selected
+     */
+    fun setItemSelected(index: Int) {
+        setSelection(index)
+        mAdapter.notifyDataSetChanged()
+    }
+
+    /**
+     * set item selected by item
+     */
+    fun setItemSelected(item: String) {
+        val index = mDropdownList.indexOf(item)
+        if (index != -1) {
+            setItemSelected(index)
+        }
+    }
+
+    /**
      * clear selected state of spinner
      */
     fun clear() {
-        setSelection(adapter.count)
+        setSelection(mAdapter.count)
     }
 
     private fun init(attrs: AttributeSet?) {
@@ -97,26 +119,26 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
     }
 
     private fun applyView() {
-        val adapter = ListAdapter(mDropdownResources)
-        adapter.setDropDownViewResource(mDropdownResources)
-        adapter.addAll(mDropdownList)
+        mAdapter = ListAdapter(mDropdownResources)
+        mAdapter.setDropDownViewResource(mDropdownResources)
+        mAdapter.addAll(mDropdownList)
 
         if (!TextUtils.isEmpty(mHintText)) {
-            adapter.add(mHintText)
+            mAdapter.add(mHintText)
         }
 
-        setAdapter(adapter)
-        setSelection(adapter.count)
+        setAdapter(mAdapter)
+        setSelection(mAdapter.count)
         onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
                 if (listener != null && i != mDropdownList.size) {
-                    listener!!.onItemSelected(view, i, mDropdownList[i])
+                    listener?.onItemSelected(false, view, i, mDropdownList[i])
                 }
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {
                 if (listener != null) {
-                    listener!!.onNothingSelected()
+                    listener?.onItemSelected(true, null, -1, null)
                 }
             }
         }
@@ -143,8 +165,6 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
     }
 
     interface OnItemSelectedListener {
-        fun onItemSelected(view: View, position: Int, item: String)
-
-        fun onNothingSelected()
+        fun onItemSelected(isNothingSelected: Boolean, view: View?, position: Int, item: String?)
     }
 }

@@ -20,7 +20,7 @@ allprojects {
 *app/build.gradle*
 ```
 dependencies {
-     implementation 'com.github.WindSekirun:HintableSpinner:0.5.0'
+     implementation 'com.github.WindSekirun:HintableSpinner:1.0.0'
 }
 ```
 
@@ -40,15 +40,13 @@ dependencies {
 ```Java
 HintableSpinner spinner = findViewById(R.id.spinner);
 spinner.setOnItemSelectedListener(new HintableSpinner.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(@NotNull View view, int position, @NotNull String item) {
-            Toast.makeText(MainActivity.this, String.format("selected %s -> %s", position, item), Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onItemSelected(boolean isNothingSelected, @org.jetbrains.annotations.Nullable View view,
+                                       int position, @org.jetbrains.annotations.Nullable String item) {
+                if (isNothingSelected) return;
 
-        @Override
-        public void onNothingSelected() {
-
-        }
+                Toast.makeText(MainActivity.this, String.format("selected %s -> %s", position, item), Toast.LENGTH_SHORT).show();
+            }
 });
 spinner.addDropdownList("A", "B", "C", "D", "E");
 ```
