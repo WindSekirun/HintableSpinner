@@ -130,13 +130,13 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
         setAdapter(mAdapter)
         setSelection(mAdapter.count)
         onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
                 if (listener != null && i != mDropdownList.size) {
                     listener?.onItemSelected(false, view, i, mDropdownList[i])
                 }
             }
 
-            override fun onNothingSelected(adapterView: AdapterView<*>) {
+            override fun onNothingSelected(adapterView: AdapterView<*>?) {
                 if (listener != null) {
                     listener?.onItemSelected(true, null, -1, null)
                 }
