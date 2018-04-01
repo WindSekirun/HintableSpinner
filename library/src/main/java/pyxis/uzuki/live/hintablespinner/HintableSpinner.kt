@@ -76,6 +76,17 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
 
         applyView()
     }
+    
+    /**
+    * set List<String> into dropdown list
+    *
+    * @param items
+    */
+    fun setDropdownList(items: List<String>) {
+        mDropdownList.addAll(items)
+        
+        applyView()
+    }
 
     /**
      * set Resource of DropdownView
