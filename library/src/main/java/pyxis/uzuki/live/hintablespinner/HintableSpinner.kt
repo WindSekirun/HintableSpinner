@@ -16,9 +16,11 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
     private val mDropdownList = ArrayList<String>()
     private var mHintText: String? = null
     private var mHintTextColor = R.color.default_color
-    private var listener: OnItemSelectedListener? = null
+    private var mItemSelectedListener: OnItemSelectedListener? = null
+    private var mDropdownStateChangedListener: OnDropdownStateChangedListener? = null
     private var mDropdownResources = android.R.layout.simple_spinner_dropdown_item
     private lateinit var mAdapter: ListAdapter
+    private var mOpenInitiated = false
 
     init {
         init(attrs)
@@ -53,7 +55,14 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
      * @param listener [OnItemSelectedListener]
      */
     fun setOnItemSelectedListener(listener: OnItemSelectedListener) {
-        this.listener = listener
+        this.mItemSelectedListener = listener
+    }
+
+    /**
+     * set callback of dropdown state
+     */
+    fun setOnDropdownStateChangedListener(listener: OnDropdownStateChangedListener) {
+        this.mDropdownStateChangedListener = listener
     }
 
     /**
@@ -76,7 +85,7 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
 
         applyView()
     }
-    
+
     /**
      * add all elements of List<String> into dropdown list
      *
@@ -89,10 +98,10 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
     }
 
     /**
-    * set List<String> into dropdown list
-    *
-    * @param items
-    */
+     * set List<String> into dropdown list
+     *
+     * @param items
+     */
     fun setDropdownList(items: List<String>) {
         mDropdownList.clear()
         mDropdownList.addAll(items)
@@ -132,6 +141,31 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
         setSelection(mAdapter.count)
     }
 
+    fun performClosedEvent() {
+        mOpenInitiated = false
+        if (mDropdownStateChangedListener != null) {
+            mDropdownStateChangedListener!!.onDropdownState(false)
+        }
+    }
+
+    fun hasBeenOpened(): Boolean {
+        return mOpenInitiated
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (hasBeenOpened() && hasFocus) {
+            performClosedEvent()
+        }
+    }
+
+    override fun performClick(): Boolean {
+        mOpenInitiated = true
+        if (mDropdownStateChangedListener != null) {
+            mDropdownStateChangedListener!!.onDropdownState(true)
+        }
+        return super.performClick()
+    }
+
     private fun init(attrs: AttributeSet?) {
         if (attrs != null) {
             val array = context.obtainStyledAttributes(attrs, R.styleable.HintableSpinner)
@@ -150,18 +184,18 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
             mAdapter.add(mHintText)
         }
 
-        setAdapter(mAdapter)
+        adapter = mAdapter
         setSelection(mAdapter.count)
         onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
-                if (listener != null && i != mDropdownList.size) {
-                    listener?.onItemSelected(false, view, i, mDropdownList[i])
+                if (mItemSelectedListener != null && i != mDropdownList.size) {
+                    mItemSelectedListener?.onItemSelected(false, view, i, mDropdownList[i])
                 }
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
-                if (listener != null) {
-                    listener?.onItemSelected(true, null, -1, null)
+                if (mItemSelectedListener != null) {
+                    mItemSelectedListener?.onItemSelected(true, null, -1, null)
                 }
             }
         }
@@ -189,5 +223,9 @@ class HintableSpinner constructor(context: Context, attrs: AttributeSet? = null)
 
     interface OnItemSelectedListener {
         fun onItemSelected(isNothingSelected: Boolean, view: View?, position: Int, item: String?)
+    }
+
+    interface OnDropdownStateChangedListener {
+        fun onDropdownState(isOpen: Boolean)
     }
 }
